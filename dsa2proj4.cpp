@@ -35,73 +35,61 @@ void printarr(int size1, int size2){
 
 string checkWord(string s1,string s2, string s3){
 
-	dynam[0][0]=1;
-	for(int i=0;i<=s1.length();i++){
-		for(int j=0;j<=s2.length();j++){
-			if(j==0&&i==0){
+	if(s1.length()+s2.length()!=s3.length()){
+		return "*** NOT A MERGE ***\n"; 
+	}
+
+	// Fill array
+	for (int a = 0; a < 1001; a++) {
+		for (int b = 0; b < 1001; b++) {
+			dynam[a][b] = 0;
+		}
+	}
+
+	dynam[0][0] = 1;
+
+	for(int i=0;i<=s2.length();i++){
+		for(int j=0;j<=s1.length();j++){
+			if(!dynam[i][j]){
 				continue;
 			}
-			if(dynam[i][j-1]||dynam[i-1][j]){
 
-				if(s2[j-1]==s3[i+j-1]){
-					dynam[i][j] = 2;
-				}
-				else if(s1[i-1]==s3[i+j-1]){
-					dynam[i][j] = 1;
-				}
-				else{
-					dynam[i][j] = 0;
-				}
+			if(s1[j] == s3[i+j] && !dynam[i][j+1]){
+				dynam[i][j+1] = 1;
 			}
-
-			else{
-				dynam[i][j] = 0;
+			if(s2[i] == s3[i+j] && !dynam[i+1][j]){
+				dynam[i+1][j] = 2;
 			}
 		}
 	}
-	//printarr(s1.length(),s2.length());
 
-	string newword = s3;
 
-	int i = s1.length();
-	int j = s2.length();
 
-	if(dynam[s1.length()][s2.length()]){
-		while(i>0||j>0){
-			if(dynam[i][j]!=0){
-				//cout<<newword<<endl;
-				if(s2[j-1]==s1[i-1]){
+	//printarr(s2.length(),s1.length());
+	//cout<<endl;
 
-					if(dynam[i][j-1]){
-						j--;
-					}
-					else if(dynam[i-1][j]){
-						newword[i+j-1] = toupper(s3[i+j-1]);
-						i--;
-					}
+	string word = s3;
+	int j=s1.length(),i=s2.length();
 
-				}
-				else if(s2[j-1]==s3[j+i-1]&&j!=0){
-					j--;
-				}
-				else if(s1[i-1]==s3[j+i-1]){
-					newword[i+j-1] = toupper(s3[i+j-1]);
-					i--;
-				}
-			}
-			else{
-				//cout<<"help please"<<endl;
-			}
+	// Trace back up array
+	while(i+j>0){
+		if(!dynam[i][j]){
+			return "*** NOT A MERGE ***\n";
+		}
+		if(dynam[i][j]==1){
+			word[i+j-1] = toupper(s3[i+j-1]);
+			j--;
+		}
+		if(dynam[i][j]==2){
+			i--;
 		}
 	}
-	else{
-		return "*** NOT A MERGE ***\n";
-	}
+
+	return word+ '\n';
+
 	
-
-	return newword+"\n";
-
 }
+
 int main(){
 
 	cout<<"Enter name of input file: ";
